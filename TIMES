@@ -1,0 +1,230 @@
+the issue with csum was I had MAX input on globs as 4096 FILES I meant for a single path ! :p
+
+
+BLAKE3 :
+
+bsum 
+
+time bsum -a b3 /usr/bin/**(-D.) | wc -l
+N.B. Cannot open file `/usr/bin/atop' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopacctd' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopcat' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopconvert' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopgpud' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atophide' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopsar' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/groupmems' in mode `r' (Permission denied)
+5011
+bsum -a b3 /usr/bin/**(-D.)  0.90s user 0.14s system 785% cpu 0.133 total
+wc -l  0.00s user 0.00s system 2% cpu 0.132 total
+
+
+time ./csum --legacy /bin/**(-D.) | wc -l
+Ignoring  /bin/atop
+Ignoring  /bin/atopacctd
+Ignoring  /bin/atopcat
+Ignoring  /bin/atopconvert
+Ignoring  /bin/atopgpud
+Ignoring  /bin/atophide
+Ignoring  /bin/atopsar
+Ignoring  /bin/groupmems
+5011
+./csum --legacy /bin/**(-D.)  0.97s user 0.43s system 1288% cpu 0.109 total
+wc -l  0.00s user 0.00s system 1% cpu 0.108 total
+
+
+time b3sum /usr/bin/**(-D.) | wc -l            
+b3sum: /usr/bin/atop: Permission denied (os error 13)
+b3sum: /usr/bin/atopacctd: Permission denied (os error 13)
+b3sum: /usr/bin/atopcat: Permission denied (os error 13)
+b3sum: /usr/bin/atopconvert: Permission denied (os error 13)
+b3sum: /usr/bin/atopgpud: Permission denied (os error 13)
+b3sum: /usr/bin/atophide: Permission denied (os error 13)
+b3sum: /usr/bin/atopsar: Permission denied (os error 13)
+b3sum: /usr/bin/groupmems: Permission denied (os error 13)
+5011
+b3sum /usr/bin/**(-D.)  2.02s user 0.64s system 1235% cpu 0.215 total
+wc -l  0.00s user 0.01s system 3% cpu 0.215 total
+
+
+BSUM.b3 : 133ms 
+CSUM.b3 : 109ms
+B3SUM.rust: 215ms
+
+BLAKE2 :
+
+time ./csum -a b2b --legacy /bin/**(-D.)  | wc -l
+Ignoring  /bin/atop
+Ignoring  /bin/atopacctd
+Ignoring  /bin/atopcat
+Ignoring  /bin/atopconvert
+Ignoring  /bin/atopgpud
+Ignoring  /bin/atophide
+Ignoring  /bin/atopsar
+Ignoring  /bin/groupmems
+5011
+./csum -a b2b --legacy /bin/**(-D.)  2.26s user 0.33s system 1399% cpu 0.185 total
+wc -l  0.00s user 0.00s system 1% cpu 0.184 total
+
+time bsum -a b2b /usr/bin/**(-D.) | wc -l        
+N.B. Cannot open file `/usr/bin/atop' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopacctd' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopcat' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopconvert' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopgpud' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atophide' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopsar' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/groupmems' in mode `r' (Permission denied)
+5011
+bsum -a b2b /usr/bin/**(-D.)  2.42s user 0.12s system 835% cpu 0.305 total
+wc -l  0.00s user 0.00s system 1% cpu 0.304 total
+
+
+time b2sum /usr/bin/**(-D.) | wc -l
+b2sum: /usr/bin/atop: Permission denied
+b2sum: /usr/bin/atopacctd: Permission denied
+b2sum: /usr/bin/atopcat: Permission denied
+b2sum: /usr/bin/atopconvert: Permission denied
+b2sum: /usr/bin/atopgpud: Permission denied
+b2sum: /usr/bin/atophide: Permission denied
+b2sum: /usr/bin/atopsar: Permission denied
+b2sum: /usr/bin/groupmems: Permission denied
+5011
+b2sum /usr/bin/**(-D.)  2.15s user 0.21s system 99% cpu 2.370 total
+wc -l  0.00s user 0.02s system 0% cpu 2.368 total
+
+
+CSUM.b2b : 185 ms
+BSUM.b2b : 305 ms
+B2SUM.coreutils: 2368 ms
+
+
+
+B2B BIG file (ramdisk): 4G sparse file.
+
+time b2sum /tmp/4G
+645572ca5756f9104329ed543735fc11904f0c18c4df8adf930f22d07f3094919a519ff34fd240ae3f5d5b4c8042225c109fb951036fdc99e7d2cd0c1d36b267  /tmp/4G
+b2sum /tmp/4G  2.94s user 0.25s system 99% cpu 3.190 total
+
+time bsum -a b2b /tmp/4G
+645572ca5756f9104329ed543735fc11904f0c18c4df8adf930f22d07f3094919a519ff34fd240ae3f5d5b4c8042225c109fb951036fdc99e7d2cd0c1d36b267  /tmp/4G
+bsum -a b2b /tmp/4G  2.90s user 0.04s system 100% cpu 2.934 total
+
+time ./csum -a b2b /tmp/4G
+%CSUM_HASH_ID% b2b 512
+645572ca5756f9104329ed543735fc11904f0c18c4df8adf930f22d07f3094919a519ff34fd240ae3f5d5b4c8042225c109fb951036fdc99e7d2cd0c1d36b267  /tmp/4G
+./csum -a b2b /tmp/4G  2.37s user 0.04s system 99% cpu 2.407 total
+
+CSUM: 2.4s
+BSUM: 2.9s
+B2UM: 3.2s
+
+BUT not all is yet solved: CORRECTION. bsum HAS my latest b3 code in, csum DOES NOT YET! OH DEAR. this is gonna get HOTZ :D
+By tomorrow I probably have ported the latest b3 work from half a year ago into csum which is from a year ago.
+
+Note. the etra 'file' is if csum does not get --legacy passed. it then adds a algo_type header etc since csum supports
+multi algo checksum files etc.
+
+COMBINED 4G ram + usr/bin (globbed) mode:
+
+
+BLAKE3
+
+
+time ./csum /tmp/4G /usr/bin/**(-D.) | wc -l
+Ignoring  /usr/bin/atop
+Ignoring  /usr/bin/atopacctd
+Ignoring  /usr/bin/atopcat
+Ignoring  /usr/bin/atopconvert
+Ignoring  /usr/bin/atopgpud
+Ignoring  /usr/bin/atophide
+Ignoring  /usr/bin/atopsar
+Ignoring  /usr/bin/groupmems
+5013
+./csum /tmp/4G /usr/bin/**(-D.)  1.67s user 0.51s system 279% cpu 0.780 total
+wc -l  0.00s user 0.00s system 0% cpu 0.780 total
+
+time bsum /tmp/4G /usr/bin/**(-D.) | wc -l
+N.B. Cannot open file `/usr/bin/atop' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopacctd' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopcat' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopconvert' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopgpud' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atophide' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopsar' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/groupmems' in mode `r' (Permission denied)
+5012
+bsum /tmp/4G /usr/bin/**(-D.)  2.38s user 0.18s system 1191% cpu 0.214 total
+wc -l  0.00s user 0.00s system 1% cpu 0.213 total
+
+
+
+time b3sum /tmp/4G /usr/bin/**(-D.) | wc -l
+b3sum: /usr/bin/atop: Permission denied (os error 13)
+b3sum: /usr/bin/atopacctd: Permission denied (os error 13)
+b3sum: /usr/bin/atopcat: Permission denied (os error 13)
+b3sum: /usr/bin/atopconvert: Permission denied (os error 13)
+b3sum: /usr/bin/atopgpud: Permission denied (os error 13)
+b3sum: /usr/bin/atophide: Permission denied (os error 13)
+b3sum: /usr/bin/atopsar: Permission denied (os error 13)
+b3sum: /usr/bin/groupmems: Permission denied (os error 13)
+5012
+b3sum /tmp/4G /usr/bin/**(-D.)  3.30s user 0.64s system 1236% cpu 0.319 total
+wc -l  0.01s user 0.00s system 3% cpu 0.318 total
+
+BSUM: 214ms
+B3SUM: 318ms
+CSUM: 780ms (will soon beat bsum) (should take about 630ms less)
+so ~ 150ms will be the target time.
+
+
+BLAKE2
+
+time b2sum /tmp/4G /usr/bin/**(-D.) | wc -l
+b2sum: /usr/bin/atop: Permission denied
+b2sum: /usr/bin/atopacctd: Permission denied
+b2sum: /usr/bin/atopcat: Permission denied
+b2sum: /usr/bin/atopconvert: Permission denied
+b2sum: /usr/bin/atopgpud: Permission denied
+b2sum: /usr/bin/atophide: Permission denied
+b2sum: /usr/bin/atopsar: Permission denied
+b2sum: /usr/bin/groupmems: Permission denied
+5012
+b2sum /tmp/4G /usr/bin/**(-D.)  5.07s user 0.45s system 99% cpu 5.527 total
+wc -l  0.00s user 0.01s system 0% cpu 5.527 total
+
+time bsum -a b2b /tmp/4G /usr/bin/**(-D.) | wc -l
+N.B. Cannot open file `/usr/bin/atop' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopacctd' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopcat' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopconvert' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopgpud' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atophide' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/atopsar' in mode `r' (Permission denied)
+N.B. Cannot open file `/usr/bin/groupmems' in mode `r' (Permission denied)
+5012
+bsum -a b2b /tmp/4G /usr/bin/**(-D.)  5.32s user 0.16s system 182% cpu 3.003 total
+wc -l  0.00s user 0.00s system 0% cpu 3.003 total
+
+time ./csum -a b2b /tmp/4G /usr/bin/**(-D.) | wc -l
+Ignoring  /usr/bin/atop
+Ignoring  /usr/bin/atopacctd
+Ignoring  /usr/bin/atopcat
+Ignoring  /usr/bin/atopconvert
+Ignoring  /usr/bin/atopgpud
+Ignoring  /usr/bin/atophide
+Ignoring  /usr/bin/atopsar
+Ignoring  /usr/bin/groupmems
+5013
+./csum -a b2b /tmp/4G /usr/bin/**(-D.)  4.65s user 0.30s system 198% cpu 2.489 total
+wc -l  0.00s user 0.00s system 0% cpu 2.488 total
+
+CSUM:  2.5s
+BSUM:  3s
+B2SUM: 5.2s
+
+
+
+
+
+
