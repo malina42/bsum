@@ -1,0 +1,62 @@
+I will probably allow demoware to be held in 2 repos, csum (the C version) and bsum (the D version).
+That is to say, the front ends and sometimes "middle ware" is in D, both types use blake3 and blake2 
+team's upstream algorithms and code in asm and C for hashing itself.
+
+D/bsum does not edit the backend.
+
+csum is more complete as in I am working on various projects which overlap so I will try to pull out 
+'bsum' again from csum and add it either here or part of a coming project although the older binaries
+might be added under csum repo.
+
+the D is hours and hours easier to write than in C, and is is 1:10 in locs or so. elegant and simple.
+
+But does come at a cost of generally ~ +8-15/20% extra than C depending on how much one is mixing.
+
+csum _does_ was using my "libblakes" which is a merger of blake2 and blake3 with some adjustments.
+
+I am backporting "libblakes2" (which will rleease as libblakes though), which makes both bsum and csum
+go much faster.
+
+I will try and target csum though as the final version as it does with blakes 2 beat all tools, including
+b2sum from coreutils (no surprise, it's single threaded) and rust's b3sum by the blake3 authors. 
+
+It does strike me as rust being just as fast as C which is impressive , and D being more elegant and
+very good at traversing over C/Rust but overall even in that, C will win. 
+
+so ultimately, speedwise csum > bsum > b3sum. 
+
+TODOs whichc come to mind are mostly porting work to bsum and csum again.
+
+bsum:
+
+- does not support binary formats, csum has prelim work on that but I moved ot another project
+- will probably focus on csum for these things
+
+- threads now work and are implemented across the front and middleware.
+ (in 0.9.3 there was just an old setter from the args but didn't propagate into the hashing code)
+
+- updating buffered hashing in blake3 to use libblakes2.
+- porting libblakes2 B2B to bsum
+
+After this so 0.9.4 I will only spradically polish bsum over a year or two up to 1.0. 
+
+Funtionality will be done in csum
+
+csum:
+
+- adding libblakes2. This is for b3 and b2b, I have decided to just leave b2s* ad b2bp as is in both csum/bsum 
+which use the C code from upstream blake2/libb2.
+
+-remove the binary prelim work which was geared towards non general use. 
+-once the 'speed daemon libblakes2' is in it will be all about "polishing"
+-Most features are in but in C always a lot of work around 'polishing'
+
+Example of a bug: My intention was to limit an incoming path to hash to 4096;
+by mistake I made the incoming # of files limited to 4096. No warning about 'truncated results'
+(this turned out to take me ages to realise since I had not done anything in a year on csum :p)
+
+
+- Oh lordie. see repo , will make notes there, but first is porting libblakes 2
+
+
+I will try to update a but on todos.
