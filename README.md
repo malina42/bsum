@@ -29,6 +29,10 @@ NOTE. I did not put setting threads yet , ignore the help. This means
 it will NOT do well on HDD, i.e. spinning media. neither will b3sum, 
 *unless* one sets --num-threads=1 or --rayon-threads=1 or whatever they use.
 
+EDIT: threads are settable, but they are not auto set to 1 when hashing on HDDs. 
+so this is ideal though , but must be set manually. alo if mixed incoming hash list and some are on HDD , 
+one can't set per backing media. (will come in future, at least in csum, but might be back ported to bsum too).
+
 Once/if I get feedback on that, (or I bother), I can add it. it's rather trivial.
 
 finally. I just added some code from C/asm to test speedup on single, large files (i.e. b3.MT in the C path),
