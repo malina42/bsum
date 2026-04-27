@@ -20,7 +20,7 @@ time ./bsum /dev/shm/2G
 time ./bsum /dev/shm/2G.rnd
 vs. time b2sum b3sum...
 
-time b{,2,3}sum /usr/bin/**/*(D.) (zsh)
+time b{,2,3}sum /usr/bin/**/*(-D.) (zsh)
 /usr/bin/* should be fine too. 
 
 for smaller files like /usr/share/man can also be useful
